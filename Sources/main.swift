@@ -26,6 +26,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
     private var dsBin = NSHomeDirectory() + "/.npm-global/bin/dsh"
     private var dshHome = NSHomeDirectory() + "/.dsh"
 
+    /// 界面语言跟随系统：中文系统用中文，否则英文。
+    private var useChinese: Bool {
+        let lang = Locale.preferredLanguages.first ?? "en"
+        return lang.hasPrefix("zh")
+    }
+
+    private func t(_ zh: String, _ en: String) -> String {
+        return useChinese ? zh : en
+    }
+
     // MARK: - 配置
     private func loadConfig() {
         if let port = defaults.object(forKey: "port") as? Int, port > 0, port < 65536 {
@@ -87,50 +97,50 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
         let appMenuItem = NSMenuItem()
         mainMenu.addItem(appMenuItem)
         let appMenu = NSMenu()
-        appMenu.addItem(withTitle: "关于 DeepSeek Harness",
+        appMenu.addItem(withTitle: t("关于 DeepSeek Harness", "About DeepSeek Harness"),
                         action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)),
                         keyEquivalent: "")
         appMenu.addItem(NSMenuItem.separator())
-        appMenu.addItem(withTitle: "隐藏 DeepSeek Harness",
+        appMenu.addItem(withTitle: t("隐藏 DeepSeek Harness", "Hide DeepSeek Harness"),
                         action: #selector(NSApplication.hide(_:)),
                         keyEquivalent: "h")
         appMenu.addItem(NSMenuItem.separator())
-        appMenu.addItem(withTitle: "退出 DeepSeek Harness",
+        appMenu.addItem(withTitle: t("退出 DeepSeek Harness", "Quit DeepSeek Harness"),
                         action: #selector(NSApplication.terminate(_:)),
                         keyEquivalent: "q")
         appMenuItem.submenu = appMenu
 
-        // 编辑（撤销/剪切/拷贝/粘贴/全选 —— 没有这些菜单项，WKWebView 里的快捷键全部失效）
+        // 编辑 / Edit（撤销/剪切/拷贝/粘贴/全选 —— 没有这些菜单项，WKWebView 里的快捷键全部失效）
         let editMenuItem = NSMenuItem()
         mainMenu.addItem(editMenuItem)
-        let editMenu = NSMenu(title: "编辑")
-        editMenu.addItem(withTitle: "撤销", action: Selector(("undo:")), keyEquivalent: "z")
-        editMenu.addItem(withTitle: "重做", action: Selector(("redo:")), keyEquivalent: "Z")
+        let editMenu = NSMenu(title: t("编辑", "Edit"))
+        editMenu.addItem(withTitle: t("撤销", "Undo"), action: Selector(("undo:")), keyEquivalent: "z")
+        editMenu.addItem(withTitle: t("重做", "Redo"), action: Selector(("redo:")), keyEquivalent: "Z")
         editMenu.addItem(NSMenuItem.separator())
-        editMenu.addItem(withTitle: "剪切", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
-        editMenu.addItem(withTitle: "拷贝", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
-        editMenu.addItem(withTitle: "粘贴", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
-        editMenu.addItem(withTitle: "删除", action: #selector(NSText.delete(_:)), keyEquivalent: "")
-        editMenu.addItem(withTitle: "全选", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        editMenu.addItem(withTitle: t("剪切", "Cut"), action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        editMenu.addItem(withTitle: t("拷贝", "Copy"), action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        editMenu.addItem(withTitle: t("粘贴", "Paste"), action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        editMenu.addItem(withTitle: t("删除", "Delete"), action: #selector(NSText.delete(_:)), keyEquivalent: "")
+        editMenu.addItem(withTitle: t("全选", "Select All"), action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editMenuItem.submenu = editMenu
 
-        // 显示
+        // 显示 / View
         let viewMenuItem = NSMenuItem()
         mainMenu.addItem(viewMenuItem)
-        let viewMenu = NSMenu(title: "显示")
-        viewMenu.addItem(withTitle: "重新载入页面",
+        let viewMenu = NSMenu(title: t("显示", "View"))
+        viewMenu.addItem(withTitle: t("重新载入页面", "Reload Page"),
                          action: #selector(reloadPage(_:)),
                          keyEquivalent: "r")
         viewMenuItem.submenu = viewMenu
 
-        // 窗口
+        // 窗口 / Window
         let windowMenuItem = NSMenuItem()
         mainMenu.addItem(windowMenuItem)
-        let windowMenu = NSMenu(title: "窗口")
-        windowMenu.addItem(withTitle: "最小化",
+        let windowMenu = NSMenu(title: t("窗口", "Window"))
+        windowMenu.addItem(withTitle: t("最小化", "Minimize"),
                            action: #selector(NSWindow.performMiniaturize(_:)),
                            keyEquivalent: "m")
-        windowMenu.addItem(withTitle: "关闭窗口",
+        windowMenu.addItem(withTitle: t("关闭窗口", "Close Window"),
                            action: #selector(NSWindow.performClose(_:)),
                            keyEquivalent: "w")
         windowMenuItem.submenu = windowMenu
@@ -179,11 +189,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
         button { margin-top: 8px; padding: 8px 16px; border: none; border-radius: 8px;
                  background: #4d6bfe; color: #fff; cursor: pointer; font-size: 13px; }
         </style></head><body><div class="box">
-        <h1>DeepSeek Harness 启动失败</h1>
+        <h1>\(t("DeepSeek Harness 启动失败", "DeepSeek Harness failed to start"))</h1>
         <p>\(message)</p>
-        <p>诊断：可在终端运行 <code>dsh web</code> 查看详细输出；日志位于
-           <code>~/.dsh/logs/desktop-web.log</code>。</p>
-        <button onclick="location.reload()">重试</button>
+        <p>\(t("诊断：可在终端运行 <code>dsh web</code> 查看详细输出；日志位于 <code>~/.dsh/logs/desktop-web.log</code>。",
+              "Diagnose: run <code>dsh web</code> in a terminal for details; logs live at <code>~/.dsh/logs/desktop-web.log</code>."))</p>
+        <button onclick="location.reload()">\(t("重试", "Retry"))</button>
         </div></body></html>
         """
         webView.loadHTMLString(html, baseURL: nil)
@@ -229,12 +239,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
 
     private func childEnvironment() -> [String: String] {
         var env = ProcessInfo.processInfo.environment
-        env["PATH"] = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        env["PATH"] = NSHomeDirectory() + "/.npm-global/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
         if env["DSH_HOME"] == nil || env["DSH_HOME"]!.isEmpty {
             env["DSH_HOME"] = self.dshHome
         }
         if env["LANG"] == nil || env["LANG"]!.isEmpty {
-            env["LANG"] = "zh_CN.UTF-8"
+            env["LANG"] = self.useChinese ? "zh_CN.UTF-8" : "en_US.UTF-8"
         }
         return env
     }
@@ -262,8 +272,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
             serverPid = proc.processIdentifier
             try? String(proc.processIdentifier).write(toFile: pidFilePath(), atomically: true, encoding: .utf8)
         } catch {
-            DispatchQueue.main.async {
-                self.showStartupError("无法启动服务：\(error.localizedDescription)。请确认 dsBin 配置正确（默认 ~/.npm-global/bin/dsh）。")
+            DispatchQueue.main.async { [self] in
+                self.showStartupError(t("无法启动服务：\(error.localizedDescription)。请确认 dsBin 配置正确（默认 ~/.npm-global/bin/dsh）。",
+                                        "Failed to start the service: \(error.localizedDescription). Check the dsBin setting (default ~/.npm-global/bin/dsh)."))
             }
         }
     }
@@ -275,14 +286,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKUIDelegate, WKNaviga
         timer.setEventHandler { [weak self] in
             guard let self = self else { return }
             attempts += 1
-            self.checkHealth { healthy, _, _ in
+            self.checkHealth { [self] healthy, _, _ in
                 if healthy {
                     timer.cancel()
                     DispatchQueue.main.async { self.loadApp() }
                 } else if attempts >= 60 {
                     timer.cancel()
                     DispatchQueue.main.async {
-                        self.showStartupError("服务在 60 秒内未就绪，请查看日志后重试。")
+                        self.showStartupError(self.t("服务在 60 秒内未就绪，请查看日志后重试。",
+                                                     "The service was not ready within 60 seconds; check the logs and retry."))
                     }
                 }
             }
