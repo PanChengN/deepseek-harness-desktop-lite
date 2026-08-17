@@ -1,0 +1,29 @@
+name: build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build:
+    name: Build on macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build app bundle
+        run: ./build.sh
+
+      - name: Verify bundle layout
+        run: |
+          test -f "build/DeepSeek Harness.app/Contents/MacOS/DeepSeekHarness"
+          test -f "build/DeepSeek Harness.app/Contents/Resources/AppIcon.icns"
+          test -f "build/DeepSeek Harness.app/Contents/Info.plist"
+          file "build/DeepSeek Harness.app/Contents/MacOS/DeepSeekHarness" | grep -q Mach-O
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DeepSeek-Harness-Desktop-Lite
+          path: "build/DeepSeek Harness.app"

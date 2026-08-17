@@ -1,12 +1,21 @@
-# DeepSeek Harness Desktop（macOS）
+# DeepSeek Harness Desktop 轻量版（macOS）
 
 [English](#english) | 简体中文
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-macOS%2012%2B-lightgrey.svg)](#依赖)
+[![Unofficial](https://img.shields.io/badge/status-unofficial-orange.svg)](#声明)
 
 一个**轻量级**的 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web GUI 的 macOS 桌面包装：原生 Swift + WKWebView，体积约 250 KB（无 Electron）。
 
 **启动即启动，关闭即关闭**——双击应用自动拉起 `dsh web` 服务并显示界面；关闭窗口即自动停止服务。不用再开终端。
 
-> ⚠️ 本仓库是**非官方**社区项目，与深度求索（DeepSeek）公司无关。DeepSeek 名称与鲸鱼标志为深度求索所有；本仓库仅出于兼容目的引用，无意暗示官方背书。
+## 声明
+
+> ⚠️ **本项目为非官方社区项目**，与深度求索（DeepSeek）公司没有任何关联，也未获得其认可或背书。
+> 「DeepSeek」名称与鲸鱼标志是深度求索（DeepSeek）的商标；本仓库仅在兼容性说明中使用这些名称，
+> 不代表任何官方关系。应用图标基于 LobeHub lobe-icons 的 DeepSeek 图标（MIT 许可）修改为黑色，仅用于本地展示；
+> 如需再分发，建议替换为自己的图形。
 
 ## 特性
 
