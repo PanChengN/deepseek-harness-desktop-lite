@@ -28,6 +28,9 @@ cp assets/AppIcon.icns "$BUNDLE/Contents/Resources/"
 cp Info.plist "$BUNDLE/Contents/"
 chmod +x "$BUNDLE/Contents/MacOS/DeepSeekHarness"
 
+echo "==> Ad-hoc 签名"
+codesign --force --deep -s - "$BUNDLE" 2>/dev/null || true
+
 echo "==> 健康检查（附加模式）"
 if DSH_DESKTOP_TEST=1 "$BUNDLE/Contents/MacOS/DeepSeekHarness" 2>/dev/null; then
   echo "==> 完成：$BUNDLE"
@@ -36,6 +39,10 @@ else
 fi
 
 if [[ "${1:-}" == "--install" ]]; then
+  if pgrep -x "DeepSeekHarness" >/dev/null 2>&1; then
+    echo "错误：DeepSeek Harness 正在运行，请先退出（⌘Q）再安装。" >&2
+    exit 1
+  fi
   echo "==> 安装到 ~/Applications"
   mkdir -p "$HOME/Applications"
   rm -rf "$HOME/Applications/$APP.app"
